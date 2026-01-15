@@ -35,11 +35,36 @@ echo -e "${BLUE}========================================${NC}\n"
 LAST_COMMIT_TIME=0
 COOLDOWN=10  # 10초 쿨다운 (너무 자주 커밋 방지)
 
-# fswatch가 설치되어 있는지 확인
+# fswatch check
 if ! command -v fswatch &> /dev/null; then
-    echo -e "${RED}✗ fswatch가 설치되어 있지 않습니다${NC}"
-    echo -e "${YELLOW}설치 방법: brew install fswatch${NC}"
-    exit 1
+    echo -e "${YELLOW}⚠ fswatch가 설치되어 있지 않습니다.${NC}"
+    echo -e "${YELLOW}🔄 폴링 모드(5초 주기)로 대체하여 실행합니다...${NC}"
+    
+    while true; do
+        CURRENT_TIME=$(date +%s)
+        TIME_DIFF=$((CURRENT_TIME - LAST_COMMIT_TIME))
+        
+        if [ $TIME_DIFF -ge $COOLDOWN ]; then
+            if [ -n "$(git status --porcelain)" ]; then
+                echo -e "\n${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+                echo -e "${GREEN}📝 파일 변경 감지! (폴링)${NC}"
+                echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+                
+                echo -e "\n${YELLOW}변경된 파일:${NC}"
+                git status --short
+                
+                echo -e "\n${BLUE}자동 동기화 시작...${NC}"
+                ./sync-and-deploy.sh
+                
+                LAST_COMMIT_TIME=$(date +%s)
+                
+                echo -e "\n${GREEN}✓ 자동 동기화 완료!${NC}"
+                echo -e "${YELLOW}다음 변경사항을 기다리는 중...${NC}\n"
+            fi
+        fi
+        sleep 5
+    done
+    exit 0
 fi
 
 # 파일 감시 시작

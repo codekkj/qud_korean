@@ -10,7 +10,7 @@ using XRL.UI;
 
 namespace QudKRTranslation.Patches
 {
-    [HarmonyPatch(typeof(UITextSkin), "Apply")]
+    [HarmonyPatch(typeof(UITextSkin), "Apply", new System.Type[] { })]
     public static class UITextSkin_Patch
     {
         [HarmonyPrefix]
