@@ -53,6 +53,14 @@ grep "void MethodName(" /Users/ben/Desktop/qud_korean/Assets/core_source/Path/To
 
 ---
 
+## 1. 개발 원칙 (Core Principles)
+1. **[필수] 실제 코드 기반 작업 (Code-First Verification)**
+   - **추측 금지**: "이럴 것이다"라고 가정하고 코드를 작성하지 마십시오.
+   - **확인 필수**: 반드시 `Assets/core_source` 내의 실제 게임 소스 코드를 열어서 메서드 시그니처, 변수명, 로직을 눈으로 확인한 후 작업해야 합니다.
+   - **근거 제시**: 변경 사항 제안 시 "파일 XX의 YY 라인에 이렇게 되어 있으므로"라고 근거를 대야 합니다.
+2. **모듈화 (Modularity)**: 모든 기능은 독립적인 모듈로 개발합니다.
+3. **안전성 (Safety)**: 원본 게임 로직을 해치지 않도록 방어적으로 코딩합니다.
+
 ## 🚨 문제 발생 시 대응
 
 ### "Undefined target method" 에러 발생 시
