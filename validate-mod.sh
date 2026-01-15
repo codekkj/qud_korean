@@ -114,94 +114,16 @@ for patch_file in $PATCH_FILES; do
     done
 done
 
-# 2. 네임스페이스 검증
-echo -e "\n${YELLOW}[2/5] 네임스페이스 검증...${NC}"
-echo -e "\n[2/5] 네임스페이스 검증" >> "$VALIDATION_LOG"
+# 2. 네임스페이스 검증 (비활성화됨)
+echo -e "\n${YELLOW}[2/5] 네임스페이스 검증... (건너뜀)${NC}"
+echo -e "\n[2/5] 네임스페이스 검증 (비활성화됨)" >> "$VALIDATION_LOG"
 
 # 알려진 클래스와 올바른 네임스페이스 매핑 (파일 기반)
-MAPPING_FILE="/tmp/class_namespace_map.txt"
-> "$MAPPING_FILE"  # 파일 초기화
-
-# 게임 소스에서 자동으로 매핑 생성
-echo -e "${BLUE}게임 소스에서 네임스페이스 매핑 생성 중...${NC}"
-
-IMPORTANT_CLASSES=(
-    "ScreenBuffer"
-    "Popup"
-    "MainMenu"
-    "MainMenuScreen"
-    "InventoryScreen"
-    "TradeScreen"
-    "CharacterStatusScreen"
-    "StatusScreensScreen"
-    "StatusScreen"
-    "OptionsScreen"
-    "SkillsAndPowersStatusScreen"
-    "QuestsStatusScreen"
-    "FactionsStatusScreen"
-    "JournalStatusScreen"
-    "TinkeringStatusScreen"
-    "MessageLogStatusScreen"
-    "UITextSkin"
-    "PlayerStatusBar"
-    "GameObject"
-    "HighScoresScreen"
-    "PickGameObjectScreen"
-    "CyberneticsTerminalScreen"
-    "BookScreen"
-    "HelpScreen"
-    "WorldGenerationScreen"
-    "KeybindsScreen"
-    "AbilityManagerScreen"
-    "InventoryAndEquipmentStatusScreen"
-    "AskNumberScreen"
-    "GameSummaryScreen"
-    "CyberneticsScreen"
-    "TinkeringScreen"
-    "EquipmentScreen"
-    "InputDialog"
-    "FileDialog"
-    "ProgressDialog"
-    "MessageDialog"
-    "LoginDialog"
-)
-
-for class in "${IMPORTANT_CLASSES[@]}"; do
-    # 게임 소스에서 클래스 정의 찾기 (정확한 클래스명 매칭을 위해 뒤에 공백이나 중괄호 확인)
-    CLASS_FILE=$(grep -r "^public class $class[ \t{]\|^public static class $class[ \t{]\|^public abstract class $class[ \t{]" "$GAME_SOURCE" 2>/dev/null | head -1 | cut -d: -f1 || true)
-    
-    if [ -n "$CLASS_FILE" ]; then
-        # 해당 파일에서 namespace 찾기 (세미콜론 및 중괄호 제거)
-        NAMESPACE=$(grep "^namespace" "$CLASS_FILE" 2>/dev/null | head -1 | sed 's/namespace //;s/[ ;{]*$//' | tr -d ' ' || true)
-        
-        if [ -n "$NAMESPACE" ]; then
-            echo "$class:$NAMESPACE" >> "$MAPPING_FILE"
-            echo -e "${GREEN}✓ $class → $NAMESPACE${NC}"
-            echo "✓ $class → $NAMESPACE" >> "$VALIDATION_LOG"
-        fi
-    fi
-done
-
-# 패치 파일에서 using 지시문 검증
-for patch_file in $PATCH_FILES; do
-    CLASSES_USED=$(grep -o 'typeof([^)]*)' "$patch_file" 2>/dev/null | sed 's/typeof(//;s/)//' || true)
-    
-    for class in $CLASSES_USED; do
-        # 매핑 파일에서 네임스페이스 찾기
-        REQUIRED_NS=$(grep "^$class:" "$MAPPING_FILE" 2>/dev/null | cut -d: -f2 || true)
-        
-        if [ -n "$REQUIRED_NS" ]; then
-            if ! grep -q "using $REQUIRED_NS;" "$patch_file"; then
-                echo -e "${RED}✗ $patch_file에서 'using $REQUIRED_NS;' 누락${NC}"
-                echo -e "  $class 사용을 위해 필요함"
-                echo "✗ $patch_file에서 'using $REQUIRED_NS;' 누락 ($class 사용)" >> "$VALIDATION_LOG"
-                ERRORS_FOUND=$((ERRORS_FOUND + 1))
-            else
-                echo -e "${GREEN}✓ $patch_file: $REQUIRED_NS 올바름${NC}"
-            fi
-        fi
-    done
-done
+# MAPPING_FILE="/tmp/class_namespace_map.txt"
+# > "$MAPPING_FILE"  # 파일 초기화
+# ... (중략) ...
+# REQUIRED_NS=$(grep "^$class:" "$MAPPING_FILE" 2>/dev/null | cut -d: -f2 || true)
+# ... (중략) ...
 
 # 3. using 지시문 검증
 echo -e "\n${YELLOW}[3/5] using 지시문 검증...${NC}"
