@@ -6,88 +6,78 @@
 ℹ /Users/ben/Desktop/qud_korean/Data_QudKRContent/Scripts/02_Patches/Core/SteamGalaxyPatch.cs: TargetMethod() 사용됨
 
 [2/5] 네임스페이스 검증
-✓ SkillsAndPowersStatusScreen → Qud.UI
-✓ QuestsStatusScreen → Qud.UI
-✓ Popup → XRL.UI
-✓ FactionsStatusScreen → Qud.UI
-✓ MainMenu → Qud.UI
-✓ JournalStatusScreen → Qud.UI
-✓ TinkeringStatusScreen → Qud.UI
 ✓ InventoryScreen → XRL.UI
+✓ Popup → XRL.UI
 ✓ TradeScreen → Qud.UI
-✓ MessageLogStatusScreen → Qud.UI
-✓ UITextSkin → XRL.UI
+✓ MainMenu → Qud.UI
 ✓ CharacterStatusScreen → Qud.UI
-✓ PlayerStatusBar → Qud.UI
+✓ InventoryScreen → XRL.UI
 ✓ StatusScreensScreen → Qud.UI
+✓ TradeScreen → Qud.UI
 ✓ StatusScreen → XRL.UI
-✓ GameObject → XRL.World
 ✓ OptionsScreen → Qud.UI
-✓ HighScoresScreen → Qud.UI
-✓ PickGameObjectScreen → Qud.UI
+✓ CharacterStatusScreen → Qud.UI
+✓ StatusScreensScreen → Qud.UI
+✓ SkillsAndPowersStatusScreen → Qud.UI
+✓ StatusScreen → XRL.UI
+✓ QuestsStatusScreen → Qud.UI
+✓ OptionsScreen → Qud.UI
+✓ FactionsStatusScreen → Qud.UI
+✓ JournalStatusScreen → Qud.UI
 ✓ SkillsAndPowersStatusScreen → Qud.UI
 ✓ QuestsStatusScreen → Qud.UI
-✓ CyberneticsTerminalScreen → Qud.UI
-✓ BookScreen → Qud.UI
-✓ FactionsStatusScreen → Qud.UI
-✓ HelpScreen → Qud.UI
-✓ JournalStatusScreen → Qud.UI
-✓ WorldGenerationScreen → Qud.UI
 ✓ TinkeringStatusScreen → Qud.UI
-✓ KeybindsScreen → Qud.UI
+✓ FactionsStatusScreen → Qud.UI
 ✓ MessageLogStatusScreen → Qud.UI
-✓ AbilityManagerScreen → Qud.UI
 ✓ UITextSkin → XRL.UI
+✓ JournalStatusScreen → Qud.UI
 ✓ PlayerStatusBar → Qud.UI
-✓ InventoryAndEquipmentStatusScreen → Qud.UI
+✓ TinkeringStatusScreen → Qud.UI
 ✓ GameObject → XRL.World
-✓ AskNumberScreen → Qud.UI
+✓ MessageLogStatusScreen → Qud.UI
 ✓ HighScoresScreen → Qud.UI
-✓ GameSummaryScreen → Qud.UI
+✓ UITextSkin → XRL.UI
 ✓ PickGameObjectScreen → Qud.UI
-✓ CyberneticsScreen → XRL.UI
-✓ TinkeringScreen → XRL.UI
+✓ PlayerStatusBar → Qud.UI
+✓ GameObject → XRL.World
 ✓ CyberneticsTerminalScreen → Qud.UI
-✓ EquipmentScreen → XRL.UI
 ✓ BookScreen → Qud.UI
-✓ InputDialog → RedShadow.CommonDialogs
+✓ HighScoresScreen → Qud.UI
 ✓ HelpScreen → Qud.UI
-✓ FileDialog → RedShadow.CommonDialogs
+✓ PickGameObjectScreen → Qud.UI
 ✓ WorldGenerationScreen → Qud.UI
-✓ ProgressDialog → RedShadow.CommonDialogs
+✓ CyberneticsTerminalScreen → Qud.UI
+✓ BookScreen → Qud.UI
 ✓ KeybindsScreen → Qud.UI
-✓ MessageDialog → RedShadow.CommonDialogs
+✓ HelpScreen → Qud.UI
 ✓ AbilityManagerScreen → Qud.UI
-✓ LoginDialog → RedShadow.CommonDialogs
-
-[3/5] using 지시문 검증
+✓ WorldGenerationScreen → Qud.UI
 ✓ InventoryAndEquipmentStatusScreen → Qud.UI
-
-[4/5] C# 문법 검증
-
-[5/5] 교차 참조 검증
-⚠ �� 패치 파일에서 사용되지 않음
-⚠ �� 패치 파일에서 사용되지 않음
-⚠ �� 패치 파일에서 사용되지 않음
-
-========================================
-검증 완료
-에러: ��
-경고: ��
+✓ KeybindsScreen → Qud.UI
+✓ AskNumberScreen → Qud.UI
+✓ AbilityManagerScreen → Qud.UI
+✓ GameSummaryScreen → Qud.UI
+✓ CyberneticsScreen → XRL.UI
+✓ InventoryAndEquipmentStatusScreen → Qud.UI
+✓ TinkeringScreen → XRL.UI
 ✓ AskNumberScreen → Qud.UI
 ✓ GameSummaryScreen → Qud.UI
-✓ CyberneticsScreen → XRL.UI
-✓ TinkeringScreen → XRL.UI
 ✓ EquipmentScreen → XRL.UI
 ✓ InputDialog → RedShadow.CommonDialogs
+✓ CyberneticsScreen → XRL.UI
 ✓ FileDialog → RedShadow.CommonDialogs
+✓ TinkeringScreen → XRL.UI
 ✓ ProgressDialog → RedShadow.CommonDialogs
+✓ EquipmentScreen → XRL.UI
 ✓ MessageDialog → RedShadow.CommonDialogs
+✓ InputDialog → RedShadow.CommonDialogs
 ✓ LoginDialog → RedShadow.CommonDialogs
+✓ FileDialog → RedShadow.CommonDialogs
 
 [3/5] using 지시문 검증
 
 [4/5] C# 문법 검증
+✓ ProgressDialog → RedShadow.CommonDialogs
 
 [5/5] 교차 참조 검증
 ⚠ �� 패치 파일에서 사용되지 않음

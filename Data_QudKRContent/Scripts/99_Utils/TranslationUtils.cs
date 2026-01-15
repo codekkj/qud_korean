@@ -8,24 +8,31 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace QudKRTranslation.Utils
 {
     public static class TranslationUtils
     {
-        // 태그를 추출하기 위한 정규표현식 (Unity Rich Text 및 게임 커스텀 태그)
+        // 태그(색상/게임 커스텀 마크업)를 추출하기 위한 정규식
         private static readonly Regex TagRegex = new Regex(@"(<[^>]+>|\{\{[^}]+\}\})", RegexOptions.Compiled);
 
         /// <summary>
-        /// 태그를 보존하면서 번역을 시도합니다. (단일 딕셔너리 버전)
+        /// 기존 단일-dictionary 시그니처를 유지하되 내부에서 배열 오버로드를 호출합니다.
+        /// (호환성 유지)
         /// </summary>
         public static bool TryTranslatePreservingTags(string input, out string output, Dictionary<string, string> scope)
         {
-            return TryTranslatePreservingTags(input, out output, new Dictionary<string, string>[] { scope });
+            output = input;
+            if (scope == null) return false;
+            // 단일 dict 를 배열 형태로 래핑하여 배열 오버로드로 위임
+            return TryTranslatePreservingTags(input, out output, new[] { scope });
         }
 
         /// <summary>
-        /// 태그를 보존하면서 번역을 시도합니다. (딕셔너리 배열 버전 - 우선순위 지원)
+        /// 배열(s) 형태의 scope를 받는 오버로드.
+        /// 우선순위(배열 순서)대로 번역을 시도합니다.
+        /// 태그(예: 색상, {{...}})를 플레이스홀더로 치환한 뒤 번역 -> 태그 복원.
         /// </summary>
         public static bool TryTranslatePreservingTags(string input, out string output, Dictionary<string, string>[] scopes)
         {
@@ -33,26 +40,28 @@ namespace QudKRTranslation.Utils
             if (string.IsNullOrEmpty(input) || scopes == null || scopes.Length == 0) return false;
             if (SeemsLikeControlValue(input)) return false;
 
-            // 태그가 없는 경우 일반 번역 시도 (TranslationEngine은 이미 배열을 지원함)
+            // 태그가 없는 경우 TranslationEngine의 배열 시그니처를 바로 사용
             if (!TagRegex.IsMatch(input))
             {
                 return TranslationEngine.TryTranslate(input, out output, scopes);
             }
 
-            // 태그 분리 및 플레이스홀더화
+            // 태그가 있을 때: 태그들을 플레이스홀더로 교체
             var tags = new List<string>();
-            string template = TagRegex.Replace(input, m => {
+            string template = TagRegex.Replace(input, m =>
+            {
                 tags.Add(m.Value);
                 return $"[[TAG_{tags.Count - 1}]]";
             });
 
-            // 텍스트 부분만 번역 시도
+            // 템플릿(태그 제거된 형태)을 TranslationEngine에 배열 스코프와 함께 전달
             if (TranslationEngine.TryTranslate(template, out string translatedTemplate, scopes))
             {
                 // 태그 복원
-                output = Regex.Replace(translatedTemplate, @"\[\[TAG_(\d+)\]\]", m => {
-                    int index = int.Parse(m.Groups[1].Value);
-                    return index >= 0 && index < tags.Count ? tags[index] : m.Value;
+                output = Regex.Replace(translatedTemplate, @"\[\[TAG_(\d+)\]\]", m =>
+                {
+                    int idx = int.Parse(m.Groups[1].Value);
+                    return idx >= 0 && idx < tags.Count ? tags[idx] : m.Value;
                 });
                 return true;
             }
@@ -61,27 +70,27 @@ namespace QudKRTranslation.Utils
         }
 
         /// <summary>
-        /// 숫자, On/Off 등 번역하면 안 되는 제어값인지 확인합니다.
+        /// 숫자, On/Off, 체크박스 같은 '제어값'인지 판단해 번역을 건너뛰기 위한 헬퍼.
+        /// 필요하면 규칙을 보강하세요.
         /// </summary>
         public static bool SeemsLikeControlValue(string s)
         {
-            if (string.IsNullOrEmpty(s)) return true;
-            
-            s = s.Trim();
+            if (string.IsNullOrEmpty(s)) return false;
 
-            // 전형적인 체크박스/토글 접두사가 포함된 경우
-            string[] prefixes = { "[ ] ", "[X] ", "[*] ", "( ) ", "(X) ", "(*) ", "[-] ", "[+] " };
+            // 전형적인 체크박스/토글 프리픽스들 (공백 포함 변형도 고려)
+            string trimmed = s.TrimStart();
+            string[] prefixes = { "[ ]", "[X]", "[x]", "[*]", "( )", "(X)", "(x)", "(*)" , "[■]" };
             foreach (var p in prefixes)
             {
-                if (s.StartsWith(p)) return true;
+                if (trimmed.StartsWith(p, StringComparison.InvariantCulture)) return true;
             }
 
-            // 숫자만 있는 경우 (또는 쉼표 포함)
-            if (Regex.IsMatch(s, @"^[\d,.-]+$")) return true;
-            
-            // 일반적인 UI 제어어 (대소문자 무시)
-            string lower = s.ToLower();
-            if (lower == "on" || lower == "off" || lower == "yes" || lower == "no" || lower == "true" || lower == "false")
+            // 숫자만 있는 경우 (예: "123")
+            if (Regex.IsMatch(s.Trim(), @"^\d+$")) return true;
+
+            // On/Off(대소문자 무시)만 있는 경우
+            var w = s.Trim();
+            if (w.Equals("On", StringComparison.InvariantCultureIgnoreCase) || w.Equals("Off", StringComparison.InvariantCultureIgnoreCase))
                 return true;
 
             return false;
