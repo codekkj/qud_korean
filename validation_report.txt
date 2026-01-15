@@ -88,3 +88,19 @@
 검증 완료
 에러: ��
 경고: ��
+✓ MessageDialog → RedShadow.CommonDialogs
+✓ LoginDialog → RedShadow.CommonDialogs
+
+[3/5] using 지시문 검증
+
+[4/5] C# 문법 검증
+
+[5/5] 교차 참조 검증
+⚠ �� 패치 파일에서 사용되지 않음
+⚠ �� 패치 파일에서 사용되지 않음
+⚠ �� 패치 파일에서 사용되지 않음
+
+========================================
+검증 완료
+에러: ��
+경고: ��
