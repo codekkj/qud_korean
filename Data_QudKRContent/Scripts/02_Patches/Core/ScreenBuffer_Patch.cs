@@ -7,7 +7,7 @@
  */
 
 using HarmonyLib;
-using XRL.UI;
+using ConsoleLib.Console;
 
 namespace QudKRTranslation.Patches
 {
