@@ -35,14 +35,14 @@ namespace QudKRTranslation.Patches
                 }
             }
             
-            // 시도 2: Qud.UI.MainMenuScreen
-            var type2 = AccessTools.TypeByName("Qud.UI.MainMenuScreen");
+            // 시도 2: Qud.UI.MainMenu
+            var type2 = AccessTools.TypeByName("Qud.UI.MainMenu");
             if (type2 != null)
             {
                 var method = AccessTools.Method(type2, "Show");
                 if (method != null)
                 {
-                    Debug.Log("[MainMenu_Patch] Target: Qud.UI.MainMenuScreen.Show");
+                    Debug.Log("[MainMenu_Patch] Target: Qud.UI.MainMenu.Show");
                     return method;
                 }
             }
