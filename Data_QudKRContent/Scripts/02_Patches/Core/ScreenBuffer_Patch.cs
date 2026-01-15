@@ -30,8 +30,8 @@ namespace QudKRTranslation.Patches
             var scope = ScopeManager.GetCurrentScope();
             if (scope == null) return;
             
-            // 번역 시도
-            if (TranslationEngine.TryTranslate(s, out string translated, scope))
+            // 태그를 보존하며 번역 시도
+            if (Utils.TranslationUtils.TryTranslatePreservingTags(s, out string translated, scope))
             {
                 s = translated;
             }
@@ -47,7 +47,7 @@ namespace QudKRTranslation.Patches
             var scope = ScopeManager.GetCurrentScope();
             if (scope == null) return;
 
-            if (TranslationEngine.TryTranslate(s, out string translated, scope))
+            if (Utils.TranslationUtils.TryTranslatePreservingTags(s, out string translated, scope))
             {
                 s = translated;
             }

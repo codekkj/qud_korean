@@ -51,6 +51,7 @@ namespace QudKRTranslation.Patches
         [HarmonyPrefix]
         static void Show_Prefix()
         {
+            // Note: Uses TranslationEngine indirectly via TranslationUtils in other patches.
             if (!ScopeManager.IsScopeActive(Data.MainMenuData.Translations))
             {
                 ScopeManager.PushScope(Data.MainMenuData.Translations, Data.CommonData.Translations);

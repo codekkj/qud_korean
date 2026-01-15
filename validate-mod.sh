@@ -287,8 +287,8 @@ for data_class in $DATA_CLASSES; do
     fi
 done
 
-# ScopeManager, TranslationEngine 참조 확인
-CORE_CLASSES=("ScopeManager" "TranslationEngine")
+# ScopeManager, TranslationEngine, TranslationUtils 참조 확인
+CORE_CLASSES=("ScopeManager" "TranslationEngine" "TranslationUtils")
 for core_class in "${CORE_CLASSES[@]}"; do
     if ! grep -r "$core_class" "$PROJECT_DIR/Data_QudKRContent/Scripts/02_Patches" >/dev/null 2>&1; then
         echo -e "${RED}✗ $core_class가 패치에서 사용되지 않음${NC}"

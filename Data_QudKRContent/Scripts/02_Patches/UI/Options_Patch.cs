@@ -18,11 +18,12 @@ namespace QudKRTranslation.Patches
         [HarmonyPrefix]
         static void Show_Prefix()
         {
-            // OptionsScope가 이미 활성화되어 있지 않다면 푸시
+            // 주의: CommonData를 같이 넣으면 옵션 UI 내부의 동적 텍스트 및 툴팁까지 과도하게 번역될 수 있음.
+            // 따라서 옵션 화면에서는 OptionsData 고유 항목만 번역 대상으로 삼습니다.
             if (!ScopeManager.IsScopeActive(OptionsData.Translations))
             {
-                ScopeManager.PushScope(OptionsData.Translations, CommonData.Translations);
-                Debug.Log("[Options_Patch] Scope activated");
+                ScopeManager.PushScope(OptionsData.Translations);
+                Debug.Log("[Options_Patch] Scope activated (Options logic only)");
             }
         }
 
