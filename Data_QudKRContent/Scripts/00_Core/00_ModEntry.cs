@@ -65,11 +65,12 @@ namespace QudKRTranslation
             Debug.Log("[Qud-KR Translation] 패치 대상 검증 중...");
             
             // 주요 타입 확인
-            InspectType("XRL.UI.ScreenBuffer");
+            InspectType("ConsoleLib.Console.ScreenBuffer");
+            InspectType("XRL.UI.UITextSkin");
+            InspectType("XRL.UI.Popup");
             InspectType("Qud.UI.InventoryScreen");
             InspectType("Qud.UI.TradeScreen");
             InspectType("Qud.UI.CharacterStatusScreen");
-            InspectType("XRL.UI.Popup");
             
             Debug.Log("[Qud-KR Translation] 패치 대상 검증 완료");
         }

@@ -22,18 +22,34 @@ namespace QudKRTranslation.Patches
         /// ScreenBuffer.Write 메서드 패치
         /// 현재 활성 Scope가 있을 때만 번역을 시도합니다.
         /// </summary>
-        [HarmonyPatch("Write", new System.Type[] { typeof(string) })]
+        [HarmonyPatch("Write", new System.Type[] { typeof(string), typeof(bool), typeof(bool), typeof(bool), typeof(System.Collections.Generic.List<string>), typeof(int) })]
         [HarmonyPrefix]
-        static void Write_Prefix(ref string Text)
+        static void Write_Prefix(ref string s)
         {
             // Scope가 설정되지 않았으면 번역하지 않음 (안전)
             var scope = ScopeManager.GetCurrentScope();
             if (scope == null) return;
             
             // 번역 시도
-            if (TranslationEngine.TryTranslate(Text, out string translated, scope))
+            if (TranslationEngine.TryTranslate(s, out string translated, scope))
             {
-                Text = translated;
+                s = translated;
+            }
+        }
+
+        /// <summary>
+        /// 줄바꿈을 포함한 블록 단위 Write 번역
+        /// </summary>
+        [HarmonyPatch("WriteBlockWithNewlines", new[] { typeof(string), typeof(int), typeof(int), typeof(bool) })]
+        [HarmonyPrefix]
+        static void WriteBlockWithNewlines_Prefix(ref string s)
+        {
+            var scope = ScopeManager.GetCurrentScope();
+            if (scope == null) return;
+
+            if (TranslationEngine.TryTranslate(s, out string translated, scope))
+            {
+                s = translated;
             }
         }
     }

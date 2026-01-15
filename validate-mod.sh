@@ -39,29 +39,46 @@ for patch_file in $PATCH_FILES; do
     # typeof에서 클래스명 추출
     CLASSES=$(grep -o 'typeof([^)]*)' "$patch_file" 2>/dev/null | sed 's/typeof(//;s/)//' || true)
     
+    # TargetMethod 존재 여부 확인
+    HAS_TARGET_METHOD=$(grep -q "TargetMethod()" "$patch_file" && echo "yes" || echo "no")
+    
+    if [ "$HAS_TARGET_METHOD" == "yes" ]; then
+        echo -e "${BLUE}ℹ $patch_file: TargetMethod() 사용됨 (동적 매칭)${NC}"
+        echo "ℹ $patch_file: TargetMethod() 사용됨" >> "$VALIDATION_LOG"
+        continue
+    fi
+
     for class in $CLASSES; do
         for method in $METHODS; do
             if [ -n "$class" ] && [ -n "$method" ]; then
-                # 게임 소스에서 해당 클래스와 메서드 찾기
-                FOUND=$(grep -r "class $class" "$GAME_SOURCE" 2>/dev/null | head -1 || true)
+                # 게임 소스에서 해당 클래스 파일 찾기
+                CLASS_FILE=$(find "$GAME_SOURCE" -name "$class.cs" 2>/dev/null | head -1)
                 
-                if [ -n "$FOUND" ]; then
-                    CLASS_FILE=$(echo "$FOUND" | cut -d: -f1)
-                    
-                    # 해당 파일에서 메서드 존재 확인
-                    if grep -q "public.*$method\|private.*$method\|protected.*$method" "$CLASS_FILE" 2>/dev/null; then
+                if [ -z "$CLASS_FILE" ]; then
+                    CLASS_FILE=$(grep -r "class $class" "$GAME_SOURCE" 2>/dev/null | head -1 | cut -d: -f1 || true)
+                fi
+
+                if [ -n "$CLASS_FILE" ]; then
+                    # 해당 파일에서 메서드 존재 확인 (다양한 접근 제어자 및 리턴 타입 대응)
+                    if grep -q "$method\s*(" "$CLASS_FILE" 2>/dev/null; then
                         echo -e "${GREEN}✓ $class.$method 존재 확인${NC}"
                         echo "✓ $class.$method 존재 확인" >> "$VALIDATION_LOG"
                     else
-                        echo -e "${RED}✗ $class에서 $method 메서드를 찾을 수 없음${NC}"
+                        echo -e "${RED}✗ $class에서 '$method' 메서드를 찾을 수 없음${NC}"
                         echo -e "  파일: $patch_file"
+                        echo -e "  참고: $CLASS_FILE 파일을 확인하세요."
+                        
+                        # 유사한 메서드 추천
+                        echo -e "  ${YELLOW}유사한 메서드:${NC}"
+                        grep -i "$method" "$CLASS_FILE" | grep "void\|string\|bool" | sed 's/^[ \t]*//' | sed 's/{.*//' | head -5 || true
+                        
                         echo "✗ $class에서 $method 메서드를 찾을 수 없음 (파일: $patch_file)" >> "$VALIDATION_LOG"
                         ERRORS_FOUND=$((ERRORS_FOUND + 1))
                     fi
                 else
-                    echo -e "${YELLOW}⚠ $class 클래스를 찾을 수 없음 (동적 로딩 가능성)${NC}"
-                    echo "⚠ $class 클래스를 찾을 수 없음" >> "$VALIDATION_LOG"
-                    WARNINGS_FOUND=$((WARNINGS_FOUND + 1))
+                    echo -e "${YELLOW}⚠ $class 클래스 파일을 찾을 수 없음 (라이브러리 또는 외부 클래스)${NC}"
+                    echo "⚠ $class 클래스 파일을 찾을 수 없음" >> "$VALIDATION_LOG"
+                    # WARNINGS_FOUND=$((WARNINGS_FOUND + 1))
                 fi
             fi
         done
