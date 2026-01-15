@@ -55,30 +55,59 @@ for patch_file in $PATCH_FILES; do
                 CLASS_FILE=$(find "$GAME_SOURCE" -name "$class.cs" 2>/dev/null | head -1)
                 
                 if [ -z "$CLASS_FILE" ]; then
-                    CLASS_FILE=$(grep -r "class $class" "$GAME_SOURCE" 2>/dev/null | head -1 | cut -d: -f1 || true)
+                    CLASS_FILE=$(grep -r "class $class[ \t{]" "$GAME_SOURCE" 2>/dev/null | head -1 | cut -d: -f1 || true)
                 fi
 
                 if [ -n "$CLASS_FILE" ]; then
-                    # 해당 파일에서 메서드 존재 확인 (다양한 접근 제어자 및 리턴 타입 대응)
-                    if grep -q "$method\s*(" "$CLASS_FILE" 2>/dev/null; then
-                        echo -e "${GREEN}✓ $class.$method 존재 확인${NC}"
-                        echo "✓ $class.$method 존재 확인" >> "$VALIDATION_LOG"
-                    else
+                    # 1. 메서드 이름 존재 확인
+                    if ! grep -q "$method\s*(" "$CLASS_FILE" 2>/dev/null; then
                         echo -e "${RED}✗ $class에서 '$method' 메서드를 찾을 수 없음${NC}"
                         echo -e "  파일: $patch_file"
-                        echo -e "  참고: $CLASS_FILE 파일을 확인하세요."
                         
-                        # 유사한 메서드 추천
                         echo -e "  ${YELLOW}유사한 메서드:${NC}"
-                        grep -i "$method" "$CLASS_FILE" | grep "void\|string\|bool" | sed 's/^[ \t]*//' | sed 's/{.*//' | head -5 || true
+                        grep -i "$method" "$CLASS_FILE" | grep "void\|string\|bool\|int\|ScreenBuffer" | sed 's/^[ \t]*//' | sed 's/{.*//' | head -5 || true
                         
-                        echo "✗ $class에서 $method 메서드를 찾을 수 없음 (파일: $patch_file)" >> "$VALIDATION_LOG"
                         ERRORS_FOUND=$((ERRORS_FOUND + 1))
+                        continue
+                    fi
+
+                    # 2. 시그니처(파라미터) 검증 (어트리뷰트에 리스트가 있는 경우)
+                    PARAM_TYPES=$(grep -A 1 "HarmonyPatch(\"$method\"" "$patch_file" | grep "new System.Type\[\]" | grep -o "typeof([^)]*)" | sed 's/typeof(//;s/)//' | tr '\n' ',' | sed 's/,$//' || true)
+                    
+                    if [ -n "$PARAM_TYPES" ]; then
+                        echo -e "${BLUE}ℹ $class.$method 시그니처 검증 중: ($PARAM_TYPES)${NC}"
+                        
+                        # 게임 소스에서 해당 파라미터 구성을 가진 메서드가 있는지 확인 (매우 단순화된 체크)
+                        # 실제로는 쉼표 개수나 타입 순서 등을 더 엄밀히 봐야 함
+                        PARAM_COUNT=$(echo "$PARAM_TYPES" | tr -cd ',' | wc -c)
+                        PARAM_COUNT=$((PARAM_COUNT + 1))
+                        
+                        # 소스 코드에서 해당 메서드 라인의 쉼표 개수로 파라미터 수 짐작 (오탐 가능성 있음)
+                        SOURCE_METHOD_LINE=$(grep "$method\s*(" "$CLASS_FILE" | grep -v ";" | head -1 || true)
+                        SOURCE_PARAM_COUNT=$(echo "$SOURCE_METHOD_LINE" | tr -cd ',' | wc -c)
+                        # 파라미터가 n개면 쉼표는 n-1개 (단, 파라미터가 아예 없으면 0개)
+                        if [ -n "$SOURCE_METHOD_LINE" ]; then
+                            if [[ "$SOURCE_METHOD_LINE" == *"()"* ]]; then
+                                EXPECTED_SOURCE_COUNT=0
+                            else
+                                EXPECTED_SOURCE_COUNT=$((SOURCE_PARAM_COUNT + 1))
+                            fi
+                            
+                            if [ "$PARAM_COUNT" -ne "$EXPECTED_SOURCE_COUNT" ]; then
+                                echo -e "${RED}✗ 시그니처 불일치 가능성: $class.$method${NC}"
+                                echo -e "  패치 정의: $PARAM_COUNT 개 파라미터 ($PARAM_TYPES)"
+                                echo -e "  소스 코드: 약 $EXPECTED_SOURCE_COUNT 개 파라미터"
+                                echo -e "  소스 라인: $(echo "$SOURCE_METHOD_LINE" | sed 's/^[ \t]*//')"
+                                ERRORS_FOUND=$((ERRORS_FOUND + 1))
+                            else
+                                echo -e "${GREEN}✓ $class.$method 시그니처 일치 확인${NC}"
+                            fi
+                        fi
+                    else
+                        echo -e "${GREEN}✓ $class.$method 존재 확인 (이름 매칭)${NC}"
                     fi
                 else
-                    echo -e "${YELLOW}⚠ $class 클래스 파일을 찾을 수 없음 (라이브러리 또는 외부 클래스)${NC}"
-                    echo "⚠ $class 클래스 파일을 찾을 수 없음" >> "$VALIDATION_LOG"
-                    # WARNINGS_FOUND=$((WARNINGS_FOUND + 1))
+                    echo -e "${YELLOW}⚠ $class 클래스 파일을 찾을 수 없음${NC}"
                 fi
             fi
         done

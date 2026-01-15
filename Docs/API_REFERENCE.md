@@ -7,44 +7,40 @@
 ## 1. UI 핵심 시스템
 
 ### [ConsoleLib.Console] ScreenBuffer
-**용도:** 전역 텍스트 렌더링 시스템 (클래식 UI 및 배경 텍스트)
-*   `void Write(string text)` : 텍스트를 화면에 씁니다. (가장 많이 패치됨)
-*   `ScreenBuffer WriteAt(int x, int y, string s, bool processMarkup)` : 특정 위치에 텍스트를 씁니다.
-*   `int WriteBlockWithNewlines(string s, ...)` : 여러 줄의 텍스트 블록을 씁니다.
+**용도:** 전역 텍스트 렌더링 시스템
+*   `Write` (가장 중요)
+    *   **정확한 시그니처:** `void Write(string s, bool processMarkup, bool HFlip, bool VFlip, List<string> imposters, int maxCharsWritten)`
+    *   **패치 어트리뷰트:** `[HarmonyPatch("Write", new System.Type[] { typeof(string), typeof(bool), typeof(bool), typeof(bool), typeof(System.Collections.Generic.List<string>), typeof(int) })]`
+*   `WriteBlockWithNewlines`
+    *   **패치 어트리뷰트:** `[HarmonyPatch("WriteBlockWithNewlines", new[] { typeof(string), typeof(int), typeof(int), typeof(bool) })]`
 
 ### [XRL.UI] Popup
-**용도:** 게임 내 모든 팝업 알림 및 대화 상자
-*   `static void Show(string Text, ...)` : 메시지 팝업을 표시합니다.
-*   `static string AskString(string Prompt, ...)` : 문자열 입력을 받습니다.
-*   `static int AskNumber(string Prompt, ...)` : 숫자 입력을 받습니다.
-*   `static void ShowOptionPicker(string Title, string[] Options, ...)` : 선택지 팝업을 표시합니다.
+**용도:** 모든 알림 및 선택 팝업
+*   `Show` (기본 메시지)
+    *   **시그니처:** `static void Show(string Text, bool CopyToHistory, bool bQuiet)`
+*   `ShowOptionPicker` (선택지)
+    *   **시그니처:** `static int ShowOptionPicker(string Title, string[] Options, ...)`
 
 ### [XRL.UI] UITextSkin
-**용도:** 모던 UI (TextMeshPro 기반) 텍스트 렌더링 관리
-*   `void Apply()` : 설정된 텍스트를 UI 요소에 적용합니다. (번역 시점)
-*   `bool SetText(string text)` : UI의 텍스트를 변경합니다.
+**용도:** 모던 UI 텍스트 관리
+*   `Apply`
+    *   **시그니처:** `void Apply()` (파라미터 없음)
+    *   **번역 방법:** `__instance.text` 값을 직접 수정
 
 ---
 
 ## 2. 주요 게임 화면 (Qud.UI)
 
-### MainMenu / MainMenuScreen
-**용도:** 게임 시작 화면
-*   `void Show()` : 메인 메뉴를 표시합니다. (Scope 설정 시점)
-*   `void UpdateMenuBars()` : 하단 버튼 바 등을 업데이트합니다.
+### MainMenuScreen (또는 XRL.UI.MainMenu)
+*   **Show**: 화면 진입 시점 (`void Show()`)
+*   **UpdateMenuBars**: 하단 버튼 바 갱신 (`void UpdateMenuBars()`)
 
-### InventoryScreen / InventoryAndEquipmentStatusScreen
-**용도:** 인벤토리 및 장비 관리 화면
-*   `void Show()` : 인벤토리 화면을 엽니다.
-*   `void RebuildLists(GameObject GO)` : 아이템 목록을 다시 생성합니다.
-*   `void UpdateViewFromData()` : 데이터를 기반으로 화면을 갱신합니다.
+### InventoryAndEquipmentStatusScreen
+*   **UpdateViewFromData**: 화면 데이터 갱신 (`void UpdateViewFromData()`)
 
-### CharacterStatusScreen / StatusScreensScreen
-**용도:** 캐릭터 정보, 속성, 변이 화면
-*   `string GetTabString()` : 탭 이름(속성, 권능 등)을 반환합니다.
-*   `void UpdateViewFromData()` : 속성치 및 포인트 현황을 갱신합니다.
-*   `void HandleBuyMutation()` : 변이 구매 버튼 처리.
-
+### CharacterStatusScreen
+*   **GetTabString**: 탭 이름 반환 (`string GetTabString()`)
+*   **UpdateViewFromData**: 상세 정보 갱신 (`void UpdateViewFromData()`)
 ### TradeScreen
 **용도:** 상점 거래 화면
 *   `void BeforeShow()` : 화면 표시 전 준비.

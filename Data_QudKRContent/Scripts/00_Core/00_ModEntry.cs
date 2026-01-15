@@ -25,8 +25,9 @@ namespace QudKRTranslation
                 
                 // Harmony 인스턴스 생성
                 var harmony = new Harmony("com.boram.qud.translation");
+                Debug.Log($"[Qud-KR Translation] Harmony Version: {Harmony.VersionInfo(out var version)} (Actual: {version})");
                 
-                // 패치 적용 전 타입 검증 (선택적)
+                // 패치 적용 전 타입 검증
                 VerifyPatchTargets();
                 
                 // 모든 Harmony 패치 적용
