@@ -38,7 +38,7 @@ namespace QudKRTranslation.Utils
         {
             output = input;
             if (string.IsNullOrEmpty(input) || scopes == null || scopes.Length == 0) return false;
-            if (SeemsLikeControlValue(input)) return false;
+            if (IsControlValue(input)) return false;
 
             // 태그가 없는 경우 TranslationEngine의 배열 시그니처를 바로 사용
             if (!TagRegex.IsMatch(input))
@@ -70,16 +70,15 @@ namespace QudKRTranslation.Utils
         }
 
         /// <summary>
-        /// 숫자, On/Off, 체크박스 같은 '제어값'인지 판단해 번역을 건너뛰기 위한 헬퍼.
-        /// 필요하면 규칙을 보강하세요.
+        /// 체크박스/숫자/On/Off 등 번역하면 안 되는 '제어값'인지 판단합니다.
+        /// Options/툴팁에서 숫자나 On/Off 값이 번역되는 것을 막기 위해 public으로 노출합니다.
         /// </summary>
-        public static bool SeemsLikeControlValue(string s)
+        public static bool IsControlValue(string s)
         {
             if (string.IsNullOrEmpty(s)) return false;
 
-            // 전형적인 체크박스/토글 프리픽스들 (공백 포함 변형도 고려)
             string trimmed = s.TrimStart();
-            string[] prefixes = { "[ ]", "[X]", "[x]", "[*]", "( )", "(X)", "(x)", "(*)" , "[■]" };
+            string[] prefixes = { "[ ]", "[X]", "[x]", "[*]", "( )", "(X)", "(x)", "(*)", "[■]" };
             foreach (var p in prefixes)
             {
                 if (trimmed.StartsWith(p, StringComparison.InvariantCulture)) return true;
