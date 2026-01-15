@@ -13,14 +13,29 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}  완전 자동화: Git + 모드 배포${NC}"
+echo -e "${BLUE}  완전 자동화: 검증 + Git + 모드 배포${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 # 프로젝트 디렉토리로 이동
 cd "$(dirname "$0")"
 
+# 0단계: 모드 검증
+echo -e "\n${BLUE}[단계 0/3] 모드 검증${NC}"
+echo -e "${BLUE}========================================${NC}"
+
+if [ -f "./validate-mod.sh" ]; then
+    if ./validate-mod.sh; then
+        echo -e "${GREEN}✓ 검증 통과${NC}"
+    else
+        echo -e "${RED}✗ 검증 실패 - 배포 중단${NC}"
+        exit 1
+    fi
+else
+    echo -e "${YELLOW}⚠ 검증 스크립트 없음 - 건너뜀${NC}"
+fi
+
 # 1단계: Git 동기화
-echo -e "\n${BLUE}[단계 1/2] Git 동기화${NC}"
+echo -e "\n${BLUE}[단계 1/3] Git 동기화${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 if [ -z "$1" ]; then
@@ -32,7 +47,7 @@ else
 fi
 
 # 2단계: 모드 배포
-echo -e "\n${BLUE}[단계 2/2] 모드 배포${NC}"
+echo -e "\n${BLUE}[단계 2/3] 모드 배포${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 ./deploy-mods.sh

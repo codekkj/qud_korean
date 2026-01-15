@@ -1,0 +1,56 @@
+모드 검증 보고서 - #오후
+========================================
+
+[1/5] 메서드 존재 확인
+
+[2/5] 네임스페이스 검증
+✓ Popup → XRL.UI
+✓ MainMenu → Qud.UI
+✓ InventoryScreen → XRL.UI
+✓ TradeScreen → Qud.UI
+✓ CharacterStatusScreen → Qud.UI
+✓ StatusScreensScreen → Qud.UI
+✓ StatusScreen → XRL.UI
+✓ OptionsScreen → Qud.UI
+✓ SkillsAndPowersStatusScreen → Qud.UI
+✓ QuestsStatusScreen → Qud.UI
+✓ FactionsStatusScreen → Qud.UI
+✓ JournalStatusScreen → Qud.UI
+✓ TinkeringStatusScreen → Qud.UI
+✓ MessageLogStatusScreen → Qud.UI
+✓ UITextSkin → XRL.UI
+✓ PlayerStatusBar → Qud.UI
+✓ GameObject → XRL.World
+✓ HighScoresScreen → Qud.UI
+✓ PickGameObjectScreen → Qud.UI
+✓ CyberneticsTerminalScreen → Qud.UI
+✓ BookScreen → Qud.UI
+✓ HelpScreen → Qud.UI
+✓ WorldGenerationScreen → Qud.UI
+✓ KeybindsScreen → Qud.UI
+✓ AbilityManagerScreen → Qud.UI
+✓ InventoryAndEquipmentStatusScreen → Qud.UI
+✓ AskNumberScreen → Qud.UI
+✓ GameSummaryScreen → Qud.UI
+✓ CyberneticsScreen → XRL.UI
+✓ TinkeringScreen → XRL.UI
+✓ EquipmentScreen → XRL.UI
+✓ InputDialog → RedShadow.CommonDialogs
+✓ FileDialog → RedShadow.CommonDialogs
+✓ ProgressDialog → RedShadow.CommonDialogs
+✓ MessageDialog → RedShadow.CommonDialogs
+✓ LoginDialog → RedShadow.CommonDialogs
+
+[3/5] using 지시문 검증
+
+[4/5] C# 문법 검증
+
+[5/5] 교차 참조 검증
+⚠ �� 패치 파일에서 사용되지 않음
+⚠ �� 패치 파일에서 사용되지 않음
+⚠ �� 패치 파일에서 사용되지 않음
+
+========================================
+검증 완료
+에러: ��
+경고: ��
